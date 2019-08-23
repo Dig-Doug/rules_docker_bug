@@ -1,13 +1,5 @@
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
-
-http_file(
-    name = "docker_gpg",
-    sha256 = "1500c1f56fa9e26b9b8f42452a553675796ade0807cdce11975eb98170b3a570",
-    urls = [
-        "https://download.docker.com/linux/ubuntu/gpg",
-    ],
-)
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "io_bazel_rules_docker",
@@ -44,6 +36,13 @@ container_deps()
 load(
     "@io_bazel_rules_docker//container:container.bzl",
     "container_pull",
+)
+
+container_pull(
+    name = "official_ubuntu",
+    digest = "sha256:eb70667a801686f914408558660da753cde27192cd036148e58258819b927395",
+    registry = "index.docker.io",
+    repository = "library/ubuntu",
 )
 
 container_pull(

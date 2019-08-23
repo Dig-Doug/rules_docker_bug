@@ -5,87 +5,27 @@ load(
 )
 
 toolchain_container(
-    name = "base",
-    base = "@rbe_ubuntu16_04//image",
-    packages = [
-        "apt-transport-https",
-        "git",
-        "software-properties-common",
-        "wget",
-    ],
-    tags = [
-        "local",
-    ],
+    name = "base_works",
+    base = "@official_ubuntu//image",
 )
 
 toolchain_container(
-    name = "with_deps",
-    additional_repos = [
-        "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable",
-    ],
-    base = ":base.tar",
-    keys = [
-        "@docker_gpg//file",
-    ],
+    name = "works",
+    base = ":base_works.tar",
     packages = [
-        # Common,
-        "clang-6.0",
-        "clang-format-6.0",
-        # TODO(doug): "llvm-7-dev",
-        # TODO(doug): "libllvm7",
-        # TODO(doug): "clang-7",
-        "build-essential",
-        "openjdk-8-jdk",
-        # TODO(doug): "gcc-8",
-        # TODO(doug): "g++-8",
         "gcc",
-        "g++",
-        # Bazel,
-        "pkg-config",
-        "zip",
-        "g++",
-        "zlib1g-dev",
-        "unzip",
-        "python",
-        "python3",
-        # bazel maven
-        "maven",
-        # bazel foreign,
-        "cmake",
-        "m4",
-        # PostgreSQL,
-        "libpq-dev",
-        "postgresql-server-dev-all",
-        "libssl-dev",
-        # CGAL
-        "libgmp3-dev",
-        "libmpfr-dev",
-        # Docker
-        # NOTE: Docker is installed, but it doesn't work in the CI
-        "docker-ce",
-        "docker-ce-cli",
-        "containerd.io",
-    ],
-    tags = [
-        "local",
-    ],
+    ]
 )
 
-BAZELISK_VERSION = "c6a1dcbb3dbdad1d254e0fdbf74151be3e18e114"
-
-BAZELISK_ARCHIVE = "/tmp/bazelisk.tar.gz"
-
-container_run_and_commit(
-    name = "install_bazelisk",
-    commands = [
-        "wget 'https://github.com/philwo/bazelisk/archive/{}.tar.gz' -O '{}'".format(BAZELISK_VERSION, BAZELISK_ARCHIVE),
-        "tar xzf '{}' -C /tmp".format(BAZELISK_ARCHIVE),
-        "cd '/tmp/bazelisk-{}'".format(BAZELISK_VERSION),
-        "cp bazelisk.py /usr/local/bin/bazel",
-    ],
-    image = ":with_deps.tar",
-    tags = [
-        "local",
-    ],
+toolchain_container(
+    name = "base_fails",
+    base = "@rbe_ubuntu16_04//image",
 )
 
+toolchain_container(
+    name = "fails",
+    base = ":base_fails.tar",
+    packages = [
+        "gcc",
+    ]
+)
