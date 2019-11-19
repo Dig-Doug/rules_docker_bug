@@ -1,31 +1,29 @@
-load("@io_bazel_rules_docker//docker/util:run.bzl", "container_run_and_commit")
 load(
     "@io_bazel_rules_docker//docker/toolchain_container:toolchain_container.bzl",
     "toolchain_container",
 )
 
 toolchain_container(
-    name = "base_works",
+    name = "base",
     base = "@official_ubuntu//image",
-)
-
-toolchain_container(
-    name = "works",
-    base = ":base_works.tar",
     packages = [
-        "gcc",
-    ]
+        "ca-certificates",
+    ],
 )
 
 toolchain_container(
-    name = "base_fails",
-    base = "@rbe_ubuntu16_04//image",
-)
-
-toolchain_container(
-    name = "fails",
-    base = ":base_fails.tar",
+    name = "with_deps",
+    base = ":base.tar",
+    additional_repos = [
+        "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable",
+        "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-9 main",
+    ],
+    keys = [
+        "@docker_gpg//file",
+        "@llvm_gpg//file",
+    ],
     packages = [
-        "gcc",
-    ]
+        "docker",
+        "clang-7",
+    ],
 )
